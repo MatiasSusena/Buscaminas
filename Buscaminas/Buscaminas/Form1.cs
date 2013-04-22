@@ -9,8 +9,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 /*
- *  NOMBRE:
- *  APELLIDOS: 
+ *  NOMBRE: Matías
+ *  APELLIDOS: Susena Tizón
+ *  1º D.A.M.
  *  ESTO ES UNA PRUEBA DE GITHUB
  * 
  */
