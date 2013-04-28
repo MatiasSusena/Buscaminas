@@ -25,7 +25,7 @@ namespace Buscaminas
             int columnas = 20;
             int filas = 20;
             int anchoBoton = 20;
-            int minas = 20;
+            int minas = 40;
 
         //si el tag es 1 es que no hay bomba
         //si el tag es 2 es que si hay bomba
@@ -61,15 +61,49 @@ namespace Buscaminas
                     boton.Location = new Point(i * anchoBoton, j * anchoBoton);
                     //Esta es la forma de añadir / asociar un evento a mano
                     boton.Click += chequeaBoton;
-                    boton.Tag = "1";
+                    boton.Tag = "0";
                     matrizBotones[i, j] = boton;
                     panel1.Controls.Add(boton);
                 }
 
             poneMinas();
+            cuentaMinas();
         }
 
 
+        private void cuentaMinas()
+        {
+            for (int i = 0; i < filas; i++)
+                for (int j = 0; j < columnas; j++)
+                {
+                    int numeroBombas = 0;
+
+                    for (int k = -1; k < 2; k++)
+                    {
+                        for (int m = -1; m < 2; m++)
+                        {
+                            int f = i + k;
+                            int c = j + m;
+                            if ((c < columnas) && (c >= 0) &&
+                                (f < filas) && (f >= 0))
+                            {
+                                if (matrizBotones[c, f].Tag == "B")
+                                {
+                                    numeroBombas++;
+                                }
+                            }
+                        }
+                    }
+                    if ((matrizBotones[j, i].Tag != "B") &&
+                        (numeroBombas > 0))
+                    {
+                        matrizBotones[j, i].Tag = numeroBombas.ToString();
+                        matrizBotones[j, i].Text = numeroBombas.ToString();
+                    }
+                }
+        } //fin del cuentaMinas
+
+        //este metodo pone las minas en su posicion de forma aleatoria
         private void poneMinas() {
             Random aleatorio = new Random();
             int x, y = 0;
@@ -77,13 +111,14 @@ namespace Buscaminas
             {
                 x = aleatorio.Next(filas);
                 y = aleatorio.Next(columnas);
-                while (!matrizBotones[y, x].Tag.Equals("1"))
+                while (!matrizBotones[y, x].Tag.Equals("0"))
                 {
                     x = aleatorio.Next(filas);
                     y = aleatorio.Next(columnas);
                 }
-                matrizBotones[y, x].Tag = "2";
+                matrizBotones[y, x].Tag = "B";
                 matrizBotones[y, x].Text = "B";
+                matrizBotones[y, x].BackColor = Color.Orange;
             }
         }
 
@@ -96,19 +131,28 @@ namespace Buscaminas
             int fila = b.Location.Y / anchoBoton;
 
 
-
-            for (int i = -1; i < 2; i++) {
-                for (int j = -1; j < 2; j++) {
-                    if ((columna + j < columnas) && (columna + j>=0) && (fila +i <filas) && (fila +i >= 0))
+            if (matrizBotones[columna, fila].Tag == "0")
+            {
+                b.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+                for (int i = -1; i < 2; i++)
+                {
+                    for (int j = -1; j < 2; j++)
                     {
-                        if (matrizBotones[columna + j, fila + i].BackColor != Color.Fuchsia) {
-                    matrizBotones[columna+j, fila+i].BackColor = Color.Fuchsia;
-                    chequeaBoton(matrizBotones[columna + j,fila + i], e);
+
+                        int f = fila + i;
+                        int c = columna + j;
+                        if ((c < columnas) && (c >= 0) && (f < filas) && (f >= 0))
+                        {
+
+                           
+                            if (matrizBotones[c, f].FlatStyle != System.Windows.Forms.FlatStyle.Flat)
+                            {
+                                chequeaBoton(matrizBotones[columna + j, fila + i], e);
+                            }
                         }
                     }
                 }
             }
-
 
             //    //Pintamos de fuchsia usando la matriz y no el sender
             //    //Pintamos a la izquierda y derecha de nuestro boton pulsado
